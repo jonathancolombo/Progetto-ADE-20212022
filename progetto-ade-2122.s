@@ -29,6 +29,7 @@
         li s4 68    #carico D
         li s5 69    #carico E
         jal encryptString
+        jal decryptString
         j endProgram
         
         encryptString:
@@ -40,14 +41,14 @@
                 sw a0 0(sp) 
                 
                 beq t0 zero endEncryptString
-                beq t0 s1 algorithmA
+                beq t0 s1 cryptA
                 #beq t0 s2 algorithmB
                 #beq t0 s3 algorithmC
                 #beq t0 s4 algorithmD
                 #beq t0 s5 algorithmE
                 j controlCharacter
                 
-                algorithmA:
+                cryptA:
                     lw a0 sostK #carico lo shift 
                     addi sp sp -4 #alloco memoria per un byte
                     sw ra 0(sp) #mi salvo l'indirizzo di ritorno
@@ -136,11 +137,51 @@
                                             lw a0 sostK
                                             jr ra
                                             
-                                            
+                decryptString:
+                    addi a0 a0 -1    
+                        decryptLoop:
+                            addi a0 a0 -1
+                            lb t0 0(a0)
+                            addi sp sp -4
+                            sw a0 0(sp)
+                            
+                            beq t0 zero endDecryptString
+                            beq t0 s1 decryptA
+                            #beq t0 s2 decryptB
+                            #beq t0 s3 decryptC
+                            #beq t0 s4 decryptD
+                            #beq t0 s5 decryptE
+                            j decryptLoop
+                
+                decryptA:
+                    lw a0 sostK
+                    addi sp sp -4
+                    sw ra 0(sp)
+                    jal decryptSubstitution
+                    lw ra 0(sp)
+                    addi sp sp 4
+                    lw a0 0(sp)
+                    addi sp sp 4
+                    j decryptLoop
+                    
+                decryptSubstitution:
+                    li t1 -1
+                    mul a0 a0 t1
+                    addi sp sp -4
+                    sw ra 0(sp)
+                    jal substitution
+                    lw ra 0(sp)
+                    addi sp sp 4
+                    jr ra                                
+                 
                                             
                 endEncryptString:
                     addi sp sp 4
                     jr ra 
+                    
+                endDecryptString:
+                    addi sp sp 4
+                    jr ra
                     
                 endProgram:
                     la a0 stringFinal
