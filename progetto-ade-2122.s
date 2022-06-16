@@ -2,13 +2,15 @@
 
 .data
     sostK: .word 1
-    myPlainText: .string "AMO AssEMBLY"
+    myPlainText: .string "LAUREATO"
     characterUnderLine: .byte 10       
     characterDiv: .word 0          	
-	 myCypher: .string "A"
+	 myCypher: .string "B"
+    blockKey: .string "OLE"
 	 stringExit: .string "Programma terminato!"
 	 stringCypherExit: .string "Caratteri terminati nella chiave!"
     stringDebugA: .string "Debug algoritmo A -> " 
+    stringDebugB: .string "Debug algoritmo B -> " 
     stringFinal: .string "Stringa computata -> "
     
 .text 
@@ -29,7 +31,7 @@
         li s4 68    #carico D
         li s5 69    #carico E
         jal encryptString
-        jal decryptString
+        #jal decryptString
         j endProgram
         
         encryptString:
@@ -42,7 +44,7 @@
                 
                 beq t0 zero endEncryptString
                 beq t0 s1 cryptA
-                #beq t0 s2 algorithmB
+                beq t0 s2 cryptB
                 #beq t0 s3 algorithmC
                 #beq t0 s4 algorithmD
                 #beq t0 s5 algorithmE
@@ -136,7 +138,86 @@
                                             li a2 0
                                             lw a0 sostK
                                             jr ra
-                                            
+                cryptB:
+                    la a0 blockKey
+                    
+                    addi sp sp -4
+                    sw ra 0(sp)
+                    
+                    jal encryptBlock
+                    
+                    lw ra 0(sp)
+                    addi sp sp 4
+                    
+                    la a0 stringDebugB
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                    
+                    lw a0 0(sp)
+                    addi sp sp 4
+                    j controlCharacter 
+                     
+                    encryptBlock:
+                        li t0 0
+                        li t1 0
+		                li t2 0
+		                li t6 0
+                        
+                        li a2 96
+                        add t4 t4 a0
+                        add t3 t3 a0 
+                        addi t5 a1 0
+                         
+                        calculateString:
+                            lb t0 0(t4)
+                            beq t0 zero block
+                            addi t1 t1 1
+                            addi t4 t4 1
+                            j calculateString
+                            
+                            
+                        block:
+                            lb t0 0(a1)
+                            beq t0 zero endEncryptB
+                            addi t0 t0 -32
+                            lb t2 0(t3)
+                            addi t2 t2 -32 
+                            add t0 t2 t0
+                            
+                            rem t0 t0 a2
+                            addi t0 t0 32
+                            sb t0 0(a1)
+                            addi t6 t6 1
+                            rem t6 t6 t1
+                            add t3 t6 a0
+                            addi a1 a1 1
+                            j block
+                            
+                            endEncryptB:
+                                add a1 t5 zero
+                                li t0 0
+		                        li t1 0
+		                        li t2 0
+		                        li t3 0
+		                        li t4 0
+		                        li t5 0
+		                        li t6 0		
+		                        li a2 0
+		                        jr ra 
+                            
+                                                
                 decryptString:
                     addi a0 a0 -1    
                         decryptLoop:
