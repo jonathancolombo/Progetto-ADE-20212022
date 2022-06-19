@@ -31,7 +31,7 @@
         li s4 68    #carico D
         li s5 69    #carico E
         jal encryptString
-        #jal decryptString
+        jal decryptString
         j endProgram
         
         encryptString:
@@ -228,7 +228,7 @@
                             
                             beq t0 zero endDecryptString
                             beq t0 s1 decryptA
-                            #beq t0 s2 decryptB
+                            beq t0 s2 decryptB
                             #beq t0 s3 decryptC
                             #beq t0 s4 decryptD
                             #beq t0 s5 decryptE
@@ -255,6 +255,81 @@
                     addi sp sp 4
                     jr ra                                
                  
+                 decryptB:
+                     la a0 blockKey
+                     addi sp sp -4
+                     sw ra 0(sp)
+                     jal decryptBlock
+                     
+                     #finire e controllare parte decryptB
+                     
+                 decryptBlock:
+                     li t0 0
+                     li t1 0
+                     li t2 0
+                     li t6 0
+                     li a2 32
+                     li a3 0
+                     li a4 256
+                     li a5 96 
+                     addi t4 a0 0
+                     addi t3 a0 0 
+                     addi t5 a1 0
+                     
+                 decryptCalculateString:
+                     lb t0 0(t4)
+                     beq t0 zero decryptBlockTwo
+                     addi t1 t1 1
+                     addi t4 t4 1
+                     j decryptCalculateString
+                     
+                 decryptBlockTwo:
+                     lb t0 0(a1)
+                     beq t0 zero endDecryptB
+                     addi t0 t0 -32
+                     bge t0 a2 noSum
+                     addi t0 t0 96
+                 
+                 noSum:
+                     lb t2 0(t3)
+                     addi t2 t2 -32
+                     sub t0 t0 t2
+                     addi t0 t0 32
+                     blt a3 t0 okNum
+                     addi t0 t0 -160
+                 okNum:
+                     bge t0 a2 numOk
+                     addi t0 t0 96
+                 numOk:
+                     blt a3 t0 okNum2
+                     addi t0 t0 -96
+                 okNum2:
+                     li t4 128
+                     blt t0 t4 okNum3
+                     addi t0 t0 -96
+                 okNum3:
+                     sb t0 0(a1)
+                     addi t6 t6 1
+                     rem t6 t6 t1
+                     add t3 t6 a0
+                     addi a1 a1 1
+                     j decryptBlockTwo
+                 
+                        
+                  endDecryptB:
+                      addi a1 t5 0
+                      li t0 0 
+                      li t1 0
+                      li t2 0
+                      li t3 0
+                      li t4 0
+                      li t5 0
+                      li t6 0
+                      li a2 0
+                      li a6 0
+                      jr ra 
+                         
+                     
                                             
                 endEncryptString:
                     addi sp sp 4
