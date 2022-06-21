@@ -220,6 +220,7 @@
                                                 
                 decryptString:
                     addi a0 a0 -1    
+                    
                         decryptLoop:
                             addi a0 a0 -1
                             lb t0 0(a0)
@@ -260,8 +261,27 @@
                      addi sp sp -4
                      sw ra 0(sp)
                      jal decryptBlock
-                     
                      #finire e controllare parte decryptB
+                     lw ra 0(sp)
+                     addi sp sp 4
+                     
+                     
+                     la a0 stringDebugB
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                     j decryptLoop
                      
                  decryptBlock:
                      li t0 0
