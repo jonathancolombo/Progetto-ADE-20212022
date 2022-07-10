@@ -217,6 +217,7 @@
 		                        li t6 0		
 		                        li a2 0
 		                        jr ra
+
                 cryptC:
                     addi sp sp -4
                     sw ra 0(sp)
@@ -367,7 +368,7 @@
                             beq t0 zero endDecryptString
                             beq t0 s1 decryptA
                             beq t0 s2 decryptB
-                            #beq t0 s3 decryptC
+                            beq t0 s3 decryptC
                             #beq t0 s4 decryptD
                             #beq t0 s5 decryptE
                             j decryptLoop
@@ -484,9 +485,96 @@
                       li t6 0
                       li a2 0
                       li a6 0
-                      jr ra 
-                         
+                      jr ra
+                       
+                  decryptC:
+                      addi sp sp -4
+                      sw ra 0(sp)
+                      jal decryptOccurencies
+                      lw ra 0(sp)
+                      addi sp sp 4
+                      lw a0 0(sp)
+                      addi sp sp 4
                      
+                      la a0 stringDebugC
+                      li a7 4
+                      ecall
+                    
+                      add a0 a1 zero
+                      add a2 a1 zero
+                    
+                      li a7 4
+                      ecall
+                    
+                      la a0 characterUnderLine
+                      la a1 11
+                      ecall
+                    
+                      addi a1 a2 0
+                      j decryptLoop
+                  
+                  decryptOccurencies:
+                      li t6 45
+                      li t5 32
+                      li t0 3
+                      li t1 0
+                      li t2 0
+                      li a3 0
+                      li a6 0 
+                      li a7 0
+                      li t4 0
+                      li a6 0
+                      mul a3 a1 t0
+                      
+                  decryptOccurenciesLoop:
+                      lb t0 0(a1)
+                      beq t0 zero endDecryptC
+                      
+                      posLoop:
+                          addi a1 a1 1
+                          lb t1 0(a1)
+                          beq t1 t6 countLoop
+                          addi a1 a1 1
+                          j decryptOccurenciesLoop
+                      
+                      countLoop:
+                          addi a1 a1 1
+                          lb t1 0(a1)
+                          beq t1 zero endDecryptC
+                          add t2 a3 t1
+                          addi t2 t2 -48
+                          addi t3 a1 1
+                          lb t4 0(t3)
+                          beq t4 t5 endLoopDecryptC
+                          beq t4 t6 endLoopDecryptC
+                          beq t4 zero endLoopDecryptC
+                          li a7 10
+                          addi t1 t1 -48
+                          mul a6 a7 t1
+                          addi t4 t4 -48
+                          add a6 a6 t4
+                          add a6 a3 a6
+                          sb t0 0(a6)
+                          addi a1 a1 1
+                          j posLoop 
+                      
+                      endLoopDecryptC:
+                         sb t0 0(t2)
+                         j posLoop
+                         
+                     endDecryptC:
+                         addi a1 a3 1
+                         li t0 0
+		                 li t1 0
+		                 li t2 0
+		                 li t3 0
+		                 li t4 0
+                         li t5 0
+		                 li t6 0
+		                 li a6 0
+		                 li a7 0
+		                 jr ra
+                         
                                             
                 endEncryptString:
                     addi sp sp 4
