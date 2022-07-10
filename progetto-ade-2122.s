@@ -2,15 +2,16 @@
 
 .data
     sostK: .word 1
-    myPlainText: .string "LAUREATO"
+    myPlainText: .string "sempio di messaggio criptato -1"
     characterUnderLine: .byte 10       
     characterDiv: .word 0          	
-	 myCypher: .string "B"
+	 myCypher: .string "C"
     blockKey: .string "OLE"
 	 stringExit: .string "Programma terminato!"
 	 stringCypherExit: .string "Caratteri terminati nella chiave!"
     stringDebugA: .string "Debug algoritmo A -> " 
     stringDebugB: .string "Debug algoritmo B -> " 
+    stringDebugC: .string "Debug algoritmo C -> " 
     stringFinal: .string "Stringa computata -> "
     
 .text 
@@ -45,7 +46,7 @@
                 beq t0 zero endEncryptString
                 beq t0 s1 cryptA
                 beq t0 s2 cryptB
-                #beq t0 s3 algorithmC
+                beq t0 s3 cryptC
                 #beq t0 s4 algorithmD
                 #beq t0 s5 algorithmE
                 j controlCharacter
@@ -215,7 +216,144 @@
 		                        li t5 0
 		                        li t6 0		
 		                        li a2 0
-		                        jr ra 
+		                        jr ra
+
+                cryptC:
+                    addi sp sp -4
+                    sw ra 0(sp)
+                    jal occurencies
+                    
+                    lw ra 0(sp)
+                    addi sp sp 4
+                    
+                    la a0 stringDebugC
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                    
+                    lw a0 0(sp)
+                    addi sp sp 4
+                    j controlCharacter
+                    
+                    occurencies:
+                        li t2 4
+                        li t6 45
+                        div a3 a1 t2
+                        add a7 a3 zero
+                        li t2 32 
+                        li a5 -1
+                        li a4 48
+                        li t0 0
+                    
+                    pullCharacter:
+                        lb t5 0(a1)
+                        beq t5 zero endOccurencies
+                        addi t0 t0 1
+                        bne t5 a5 avoidRepeat
+                        addi a1 a1 1
+                        j pullCharacter
+                    
+                    avoidRepeat:
+                        sb t5 0(a3)
+                        addi a3 a3 1
+                        sb t6 0(a3)
+                        addi a3 a3 1
+                        li a6 10
+                        blt t0 a6 minTen
+                        div t1 t0 a6
+                        addi t1 t1 48
+                        sb t1 0(a3)
+                        addi a3 a3 1
+                        rem t1 t0 a6
+                        addi t1 t1 48
+                        sb t1 0(a3)
+                        
+                        j continue
+                        
+                        minTen:
+                            addi t0 t0 48
+                            sb t0 0(a3)
+                            addi t0 t0 -48
+                        
+                        continue:
+                            addi sp sp -12
+                            sw a1 0(sp) 
+                            sw ra 4(sp)
+                            sw t0 8(sp)
+                            jal putPosition
+                            lw a1 0(sp)
+                            lw ra 4(sp)
+                            lw t0 8(sp)
+                            addi sp sp 12
+                            addi a1 a1 1
+                            addi a3 a3 1
+                            sb t2 0(a3)
+                            addi a3 a3 1
+                            j pullCharacter
+                            
+                        endOccurencies:
+                            addi a0 a3 -1
+                            sb zero 0(a3)
+                            addi a1 a7 0
+                            li t0 0
+                            li t1 0
+                            li t2 0
+                            li t3 0
+		                    li t4 0
+		                    li t5 0
+	                    	li t6 0
+	                    	li a3 0
+	                    	li a7 0
+	                    	li a6 0
+	                    	jr ra
+
+                        putPosition:
+                            addi a1 a1 1
+                            lb a6 0(a1)
+                            beq a6 zero endPosition
+                            addi t0 t0 1
+                            beq a6 t5 addPosition
+                            j putPosition
+                            
+                        endPosition:
+                            jr ra
+                     
+                         addPosition:
+                             addi a3 a3 1
+                             sb t6 0(a3)
+                             addi a3 a3 1
+                             li a6 10
+                             blt t0 a6 minTenTwo
+                             div t1 t0 a6
+                             addi t1 t1 48
+                             sb t1 0(a3)
+                             addi a3 a3 1
+                             rem t1 t0 a6
+                             addi t1 t1 48
+                             sb t1 0(a3)
+                             
+                             j continueTwo
+                         
+                         minTenTwo:
+                             addi t0 t0 48
+                             sb t0 0(a3)
+                             addi t0 t0 -48
+                         
+                         continueTwo:
+                             sb a5 0(a1)
+                             j putPosition
+
                             
                                                 
                 decryptString:
@@ -230,7 +368,7 @@
                             beq t0 zero endDecryptString
                             beq t0 s1 decryptA
                             beq t0 s2 decryptB
-                            #beq t0 s3 decryptC
+                            beq t0 s3 decryptC
                             #beq t0 s4 decryptD
                             #beq t0 s5 decryptE
                             j decryptLoop
@@ -347,9 +485,96 @@
                       li t6 0
                       li a2 0
                       li a6 0
-                      jr ra 
-                         
+                      jr ra
+                       
+                  decryptC:
+                      addi sp sp -4
+                      sw ra 0(sp)
+                      jal decryptOccurencies
+                      lw ra 0(sp)
+                      addi sp sp 4
+                      lw a0 0(sp)
+                      addi sp sp 4
                      
+                      la a0 stringDebugC
+                      li a7 4
+                      ecall
+                    
+                      add a0 a1 zero
+                      add a2 a1 zero
+                    
+                      li a7 4
+                      ecall
+                    
+                      la a0 characterUnderLine
+                      la a1 11
+                      ecall
+                    
+                      addi a1 a2 0
+                      j decryptLoop
+                  
+                  decryptOccurencies:
+                      li t6 45
+                      li t5 32
+                      li t0 3
+                      li t1 0
+                      li t2 0
+                      li a3 0
+                      li a6 0 
+                      li a7 0
+                      li t4 0
+                      li a6 0
+                      mul a3 a1 t0
+                      
+                  decryptOccurenciesLoop:
+                      lb t0 0(a1)
+                      beq t0 zero endDecryptC
+                      
+                      posLoop:
+                          addi a1 a1 1
+                          lb t1 0(a1)
+                          beq t1 t6 countLoop
+                          addi a1 a1 1
+                          j decryptOccurenciesLoop
+                      
+                      countLoop:
+                          addi a1 a1 1
+                          lb t1 0(a1)
+                          beq t1 zero endDecryptC
+                          add t2 a3 t1
+                          addi t2 t2 -48
+                          addi t3 a1 1
+                          lb t4 0(t3)
+                          beq t4 t5 endLoopDecryptC
+                          beq t4 t6 endLoopDecryptC
+                          beq t4 zero endLoopDecryptC
+                          li a7 10
+                          addi t1 t1 -48
+                          mul a6 a7 t1
+                          addi t4 t4 -48
+                          add a6 a6 t4
+                          add a6 a3 a6
+                          sb t0 0(a6)
+                          addi a1 a1 1
+                          j posLoop 
+                      
+                      endLoopDecryptC:
+                         sb t0 0(t2)
+                         j posLoop
+                         
+                     endDecryptC:
+                         addi a1 a3 1
+                         li t0 0
+		                 li t1 0
+		                 li t2 0
+		                 li t3 0
+		                 li t4 0
+                         li t5 0
+		                 li t6 0
+		                 li a6 0
+		                 li a7 0
+		                 jr ra
+                         
                                             
                 endEncryptString:
                     addi sp sp 4
