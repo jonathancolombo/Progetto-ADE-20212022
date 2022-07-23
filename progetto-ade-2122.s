@@ -448,7 +448,7 @@
                             beq t0 s1 decryptA
                             beq t0 s2 decryptB
                             beq t0 s3 decryptC
-                            #beq t0 s4 decryptD
+                            beq t0 s4 decryptD
                             #beq t0 s5 decryptE
                             j decryptLoop
                 
@@ -653,8 +653,27 @@
 		                 li a6 0
 		                 li a7 0
 		                 jr ra
+                
+                decryptD:
+                    addi sp sp -4
+                    sw ra 0(sp)
+                    jal decryptDictionary
+                    lw ra 0(sp)
+                    addi sp sp 4
+                    lw a0 0(sp)
+                    addi sp sp 4
+                    
+                    j decryptLoop
+                
+                decryptDictionary:
+                    addi sp sp -4
+                    sw ra 0(sp)
+                    jal dictionary
+                    lw ra 0(sp)
+                    lw a0 0(sp)
+                    addi sp sp 4
+                    jr ra
                          
-                                            
                 endEncryptString:
                     addi sp sp 4
                     jr ra 
