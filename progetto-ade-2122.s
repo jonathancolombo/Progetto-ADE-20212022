@@ -2,16 +2,17 @@
 
 .data
     sostK: .word 1
-    myPlainText: .string "sempio di messaggio criptato -1"
+    myPlainText: .string "myStr0ng P4ssW_"
     characterUnderLine: .byte 10       
     characterDiv: .word 0          	
-	 myCypher: .string "C"
+	 myCypher: .string "D"
     blockKey: .string "OLE"
 	 stringExit: .string "Programma terminato!"
 	 stringCypherExit: .string "Caratteri terminati nella chiave!"
     stringDebugA: .string "Debug algoritmo A -> " 
     stringDebugB: .string "Debug algoritmo B -> " 
     stringDebugC: .string "Debug algoritmo C -> " 
+    stringDebugD: .string "Debug algoritmo D -> " 
     stringFinal: .string "Stringa computata -> "
     
 .text 
@@ -47,7 +48,7 @@
                 beq t0 s1 cryptA
                 beq t0 s2 cryptB
                 beq t0 s3 cryptC
-                #beq t0 s4 algorithmD
+                beq t0 s4 cryptD
                 #beq t0 s5 algorithmE
                 j controlCharacter
                 
@@ -353,8 +354,86 @@
                          continueTwo:
                              sb a5 0(a1)
                              j putPosition
+                             
+                 cryptD:
+                     addi sp sp -4
+                     sw ra 0(sp)
+                     jal dictionary
+                     
+                     lw ra 0(sp)
+                    addi sp sp 4
+                    
+                    la a0 stringDebugD
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                    
+                    lw a0 0(sp)
+                    addi sp sp 4
+                    j controlCharacter
+                     
+                 dictionary:
+                     add a0 a1 zero
+                     li t1 48
+                     li t2 58
+	                 li t3 65 
+		             li t4 91 
+		             li t5 97
+		             li t6 123
+		             li a6 9
+		             li a7 26
 
-                            
+                 dictionaryLoop:
+                     lb t0 0(a0)
+                     beq t0 zero endLoop
+		             blt t0 t1 sym
+		             blt t0 t2 decNumbers
+	            	 blt t0 t3 sym
+	            	 blt t0 t4 decMaiusc
+	            	 blt t0 t5 sym
+		             blt t0 t6 decMinusc
+
+                  sym:
+            		addi a0 a0 1
+		            j dictionaryLoop           
+                 
+                   decNumbers:
+		            addi t0 t0 -48
+		            sub t0 a6 t0 
+		            addi t0 t0 48	
+		            sb t0 0(a0)
+		            addi a0 a0 1
+		            j dictionaryLoop
+                    
+                    decMaiusc:
+		                addi t0 t0 -65
+		                sub t0 a7 t0
+	                	addi t0 t0 96
+		                sb t0 0(a0)
+	                	addi a0 a0 1
+		                j dictionaryLoop
+                    
+                    decMinusc:
+		                addi t0 t0 -97
+		                sub t0 a7 t0
+		                addi t0 t0 64
+		                sb t0 0(a0)
+		                addi a0 a0 1
+		                j dictionaryLoop
+                        
+                        endLoop:
+		                jr ra 
                                                 
                 decryptString:
                     addi a0 a0 -1    
