@@ -5,7 +5,7 @@
     myPlainText: .string "myStr0ng P4ssW_"
     characterUnderLine: .byte 10       
     characterDiv: .word 0          	
-	 myCypher: .string "D"
+	 myCypher: .string "ABCD"
     blockKey: .string "OLE"
 	 stringExit: .string "Programma terminato!"
 	 stringCypherExit: .string "Caratteri terminati nella chiave!"
@@ -481,23 +481,8 @@
                      #finire e controllare parte decryptB
                      lw ra 0(sp)
                      addi sp sp 4
-                     
-                     
-                     la a0 stringDebugB
-                    li a7 4
-                    ecall
-                    
-                    add a0 a1 zero
-                    add a2 a1 zero
-                    
-                    li a7 4
-                    ecall
-                    
-                    la a0 characterUnderLine
-                    la a1 11
-                    ecall
-                    
-                    addi a1 a2 0
+                     lw a0 0(sp)
+                     addi sp sp 4
                      j decryptLoop
                      
                  decryptBlock:
@@ -568,28 +553,12 @@
                        
                   decryptC:
                       addi sp sp -4
-                      sw ra 0(sp)
+                      sw ra 0(sp) 
                       jal decryptOccurencies
                       lw ra 0(sp)
                       addi sp sp 4
                       lw a0 0(sp)
                       addi sp sp 4
-                     
-                      la a0 stringDebugC
-                      li a7 4
-                      ecall
-                    
-                      add a0 a1 zero
-                      add a2 a1 zero
-                    
-                      li a7 4
-                      ecall
-                    
-                      la a0 characterUnderLine
-                      la a1 11
-                      ecall
-                    
-                      addi a1 a2 0
                       j decryptLoop
                   
                   decryptOccurencies:
