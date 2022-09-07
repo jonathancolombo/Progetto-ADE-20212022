@@ -2,18 +2,26 @@
 
 .data
     sostK: .word 1
-    myPlainText: .string "myStr0ng P4ssW_"
+    myPlainText: .string "LAUREATO"
     characterUnderLine: .byte 10       
     characterDiv: .word 0          	
-	 myCypher: .string "ABCD"
+	  myCypher: .string "ABCDE"
     blockKey: .string "OLE"
-	 stringExit: .string "Programma terminato!"
-	 stringCypherExit: .string "Caratteri terminati nella chiave!"
-    stringDebugA: .string "Debug algoritmo A -> " 
-    stringDebugB: .string "Debug algoritmo B -> " 
-    stringDebugC: .string "Debug algoritmo C -> " 
-    stringDebugD: .string "Debug algoritmo D -> " 
-    stringFinal: .string "Stringa computata -> "
+	  stringExit: .string "Programma terminato!"
+	  stringCypherExit: .string "Caratteri terminati nella chiave!"
+    stringDebugA: .string "Debug algoritmo di cifratura A -> " 
+    stringDebugB: .string "Debug algoritmo di cifratura B -> " 
+    stringDebugC: .string "Debug algoritmo di cifratura C -> " 
+    stringDebugD: .string "Debug algoritmo di cifratura D -> " 
+    stringDebugE: .string "Debug algoritmo di cifratura E -> "
+    
+    stringDebugDA: .string "Debug algoritmo di decifratura A -> " 
+    stringDebugDB: .string "Debug algoritmo di decifratura B -> " 
+    stringDebugDC: .string "Debug algoritmo di decifratura C -> " 
+    stringDebugDD: .string "Debug algoritmo di decifratura D -> " 
+    stringDebugDE: .string "Debug algoritmo di decifratura E -> "
+    
+    stringFinal: .string "Stringa computata inizialmente decifrata -> "
     
 .text 
     main:
@@ -49,7 +57,7 @@
                 beq t0 s2 cryptB
                 beq t0 s3 cryptC
                 beq t0 s4 cryptD
-                #beq t0 s5 algorithmE
+                beq t0 s5 cryptE
                 j controlCharacter
                 
                 cryptA:
@@ -191,11 +199,11 @@
                             
                             
                         block:
-                            lb t0 0(a1)
-                            beq t0 zero endEncryptB
-                            addi t0 t0 -32
-                            lb t2 0(t3)
-                            addi t2 t2 -32 
+                            lb t0 0(a1) #t0 = cod(bij)
+                            beq t0 zero endEncryptB 
+                            #addi t0 t0 -32
+                            lb t2 0(t3) #t2 = cod(keyij)
+                            #add t2 t2 t0 
                             add t0 t2 t0
                             
                             rem t0 t0 a2
@@ -311,13 +319,13 @@
                             li t1 0
                             li t2 0
                             li t3 0
-		                    li t4 0
-		                    li t5 0
-	                    	li t6 0
-	                    	li a3 0
-	                    	li a7 0
-	                    	li a6 0
-	                    	jr ra
+		                      li t4 0
+		                      li t5 0
+	                         li t6 0
+	                         li a3 0
+	                       	li a7 0
+	                       	li a6 0
+	                     	 jr ra
 
                         putPosition:
                             addi a1 a1 1
@@ -434,6 +442,36 @@
                         
                         endLoop:
 		                jr ra 
+
+                cryptE:
+                         addi sp sp -4
+                         sw ra 0(sp)
+                         jal inversion
+                         
+                         lw ra 0(sp)
+                         addi sp sp 4
+                    
+                        la a0 stringDebugE
+                        li a7 4
+                        ecall
+                    
+                        add a0 a1 zero
+                        add a2 a1 zero
+                    
+                        li a7 4
+                        ecall
+                    
+                        la a0 characterUnderLine
+                        la a1 11
+                        ecall
+                    
+                        addi a1 a2 0
+                    
+                        lw a0 0(sp)
+                        addi sp sp 4
+                        j controlCharacter
+
+                 
                                                 
                 decryptString:
                     addi a0 a0 -1    
@@ -449,7 +487,7 @@
                             beq t0 s2 decryptB
                             beq t0 s3 decryptC
                             beq t0 s4 decryptD
-                            #beq t0 s5 decryptE
+                            beq t0 s5 decryptE
                             j decryptLoop
                 
                 decryptA:
@@ -457,8 +495,26 @@
                     addi sp sp -4
                     sw ra 0(sp)
                     jal decryptSubstitution
-                    lw ra 0(sp)
+                    
+                     lw ra 0(sp)
                     addi sp sp 4
+                    
+                    la a0 stringDebugDA
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                    
                     lw a0 0(sp)
                     addi sp sp 4
                     j decryptLoop
@@ -481,6 +537,23 @@
                      #finire e controllare parte decryptB
                      lw ra 0(sp)
                      addi sp sp 4
+                    
+                     la a0 stringDebugDB
+                     li a7 4
+                     ecall
+                    
+                     add a0 a1 zero
+                     add a2 a1 zero
+                    
+                     li a7 4
+                     ecall
+                    
+                     la a0 characterUnderLine
+                     la a1 11
+                     ecall
+                    
+                     addi a1 a2 0
+                    
                      lw a0 0(sp)
                      addi sp sp 4
                      j decryptLoop
@@ -492,7 +565,6 @@
                      li t6 0
                      li a2 32
                      li a3 0
-                     li a4 256
                      li a5 96 
                      addi t4 a0 0
                      addi t3 a0 0 
@@ -506,37 +578,28 @@
                      j decryptCalculateString
                      
                  decryptBlockTwo:
-                     lb t0 0(a1)
+                     lb t0 0(a1) #carico cod(bij) e in t0
                      beq t0 zero endDecryptB
-                     addi t0 t0 -32
-                     bge t0 a2 noSum
-                     addi t0 t0 96
-                 
-                 noSum:
-                     lb t2 0(t3)
-                     addi t2 t2 -32
+                     lb t2 0(t3) #carico il cod(kij)
+                     addi t0 t0 64
                      sub t0 t0 t2
-                     addi t0 t0 32
-                     blt a3 t0 okNum
-                     addi t0 t0 -160
-                 okNum:
-                     bge t0 a2 numOk
-                     addi t0 t0 96
-                 numOk:
-                     blt a3 t0 okNum2
-                     addi t0 t0 -96
-                 okNum2:
-                     li t4 128
-                     blt t0 t4 okNum3
-                     addi t0 t0 -96
-                 okNum3:
+                     rem t0 t0 a5
+                     blt t0 a2 setSpecialChar
                      sb t0 0(a1)
                      addi t6 t6 1
                      rem t6 t6 t1
                      add t3 t6 a0
                      addi a1 a1 1
                      j decryptBlockTwo
-                 
+                     
+                 setSpecialChar:
+                     add t0 t0 a5
+                     sb t0 0(a1)
+                     addi t6 t6 1
+                     rem t6 t6 t1
+                     add t3 t6 a0
+                     addi a1 a1 1
+                     j decryptBlockTwo
                         
                   endDecryptB:
                       addi a1 t5 0
@@ -556,9 +619,26 @@
                       sw ra 0(sp) 
                       jal decryptOccurencies
                       lw ra 0(sp)
-                      addi sp sp 4
-                      lw a0 0(sp)
-                      addi sp sp 4
+                    addi sp sp 4
+                    
+                    la a0 stringDebugDC
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                    
+                    lw a0 0(sp)
+                    addi sp sp 4
                       j decryptLoop
                   
                   decryptOccurencies:
@@ -629,6 +709,23 @@
                     jal decryptDictionary
                     lw ra 0(sp)
                     addi sp sp 4
+                    
+                    la a0 stringDebugDD
+                    li a7 4
+                    ecall
+                    
+                    add a0 a1 zero
+                    add a2 a1 zero
+                    
+                    li a7 4
+                    ecall
+                    
+                    la a0 characterUnderLine
+                    la a1 11
+                    ecall
+                    
+                    addi a1 a2 0
+                    
                     lw a0 0(sp)
                     addi sp sp 4
                     
@@ -642,6 +739,65 @@
                     lw a0 0(sp)
                     addi sp sp 4
                     jr ra
+                    
+                    decryptE:
+                         addi sp sp -4
+                         sw ra 0(sp)
+                         jal inversion
+                         
+                         lw ra 0(sp)
+                         addi sp sp 4
+                    
+                        la a0 stringDebugDE
+                        li a7 4
+                        ecall
+                    
+                        add a0 a1 zero
+                        add a2 a1 zero
+                    
+                        li a7 4
+                        ecall
+                    
+                        la a0 characterUnderLine
+                        la a1 11
+                        ecall
+                    
+                        addi a1 a2 0
+                    
+                        lw a0 0(sp)
+                        addi sp sp 4
+                        j decryptLoop
+                        
+                        inversion:
+                         li t1 0 #primo contatore
+                         li s7 0 #contatore lungh. max
+                         
+                         count_loop:
+                             add t2 t1 a1 #carico la pos del carattere da controllare e conteggiare in t2
+                             addi t1 t1 1 #increm. il cont.
+                             lb t4 0(t2) #carico il val. del carattere in t4
+                             beq t4 zero count_end
+                             addi s7 s7 1 #increm. count per calcolo lungh. max.
+                             j count_loop
+                             
+                         count_end:
+                             li t1 0
+                             
+                                 loop_inversion:
+                                     add t2 t1 a1 #pesco l'indice dell'inizio
+                                     addi t1 t1 1 #incremento il count
+                                     sub s8 s7 t1 #pesco l'indice dell'ultimo
+                                     lb t4 0(t2) #carico il carattere dell'inizio
+                                     beq t4 zero back_cryptE #se sono arrivato a fine stringa
+                                     add s9 s8 a1 #pesco l'indice dell'ultimo
+                                     lb t5 0(s9) #carico il carattere del fondo
+                                     blt s8 t1 back_cryptE #controllo di non aver superato la metà
+                                     sb t4 0(s9)
+                                     sb t5 0(t2)
+                                     j loop_inversion
+
+                         back_cryptE:
+                             jr ra 
                          
                 endEncryptString:
                     addi sp sp 4
@@ -650,7 +806,7 @@
                 endDecryptString:
                     addi sp sp 4
                     jr ra
-                    
+                         
                 endProgram:
                     la a0 stringFinal
                     li a7 4
