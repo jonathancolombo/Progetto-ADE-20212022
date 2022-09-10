@@ -2,7 +2,7 @@
 
 .data
     sostK: .word 1
-    myPlainText: .string "LAUREATO"
+    myPlainText: .string "myStr0ng P4ssW"
     characterUnderLine: .byte 10       
     characterDiv: .word 0          	
 	  myCypher: .string "ABCDE"
