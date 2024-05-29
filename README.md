@@ -31,12 +31,7 @@ Struttura del Progetto
 Il progetto è composto da variabili di input e procedure modulari per ciascun algoritmo di cifratura e decifratura, rispettando le convenzioni tra procedura chiamante e chiamata. La modularità del codice e il rispetto delle convenzioni sono fondamentali per ottenere una buona valutazione del progetto.
 File del Progetto
 
-    main.s: Contiene il codice assembly principale.
-    cifrario_sostituzione.s: Procedura per il Cifrario a Sostituzione.
-    cifrario_blocchi.s: Procedura per il Cifrario a Blocchi.
-    cifratura_occorrenze.s: Procedura per la Cifratura Occorrenze.
-    dizionario.s: Procedura per il Dizionario.
-    inversione.s: Procedura per l’Inversione.
+    ProgettoAssemblyColombo.s: Contiene il codice assembly principale.
 
 Input e Output
 
