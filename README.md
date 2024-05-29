@@ -1,4 +1,4 @@
-README
+#README
 Progetto Assembly RISC-V per il Corso di Architetture degli Elaboratori
 A.A. 2021/2022 – Messaggi in Codice
 Descrizione del Progetto
